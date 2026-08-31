@@ -1,6 +1,7 @@
 export const CONTACT_INFO = {
   address: "DOHA Qatar",
   phone: "+974 30543054",
+  whatsappUrl: "https://wa.me/97430543054",
   email: "INFO@WLIVE.com",
   /** Supplied short link — used for “Open in Maps”. */
   mapsUrl: "https://maps.app.goo.gl/8ikAoR5MqhqAeGHp8",
@@ -29,8 +30,9 @@ export const CONTACT_ITEMS = [
   {
     step: "02",
     label: "Call Us",
+    secondaryLabel: "WhatsApp",
     value: CONTACT_INFO.phone,
-    href: `tel:${CONTACT_INFO.phone.replace(/\s/g, "")}`,
+    href: CONTACT_INFO.whatsappUrl,
     type: "phone" as const,
   },
   {

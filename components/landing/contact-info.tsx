@@ -1,4 +1,4 @@
-import { ExternalLink, Mail, MapPin, Phone } from "lucide-react";
+import { ExternalLink, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 
 import { CONTACT_INFO, CONTACT_ITEMS } from "@/config/contact";
 import { cn } from "@/lib/utils";
@@ -32,6 +32,17 @@ export function ContactInfo() {
                   />
                   <p className="text-small font-medium text-text-secondary">
                     {item.label}
+                    {"secondaryLabel" in item && item.secondaryLabel ? (
+                      <>
+                        <span className="mx-1.5 text-text-tertiary/60">·</span>
+                        <MessageCircle
+                          className="mr-1 inline size-3.5 align-[-0.125em] text-brand"
+                          strokeWidth={1.5}
+                          aria-hidden
+                        />
+                        {item.secondaryLabel}
+                      </>
+                    ) : null}
                   </p>
                 </div>
                 <a
@@ -40,7 +51,7 @@ export function ContactInfo() {
                     "mt-1.5 inline-block text-body text-text-primary transition-colors duration-200 hover:text-brand",
                     item.type === "address" && "hover:underline"
                   )}
-                  {...(item.type === "address"
+                  {...(item.type === "address" || item.type === "phone"
                     ? { target: "_blank", rel: "noopener noreferrer" }
                     : {})}
                 >
