@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ImageIcon } from "lucide-react";
@@ -8,7 +8,6 @@ import { ImageIcon } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { EventGalleryLightbox } from "@/components/landing/event-gallery-lightbox";
-import { Reveal } from "@/components/landing/reveal";
 import {
   EVENT_FILTERS,
   EVENT_ITEMS,
@@ -81,19 +80,22 @@ function EventGalleryItem({
   item,
   index,
   onSelect,
+  animateEntry,
 }: {
   item: EventItem;
   index: number;
   onSelect: (item: EventItem, trigger: HTMLButtonElement) => void;
+  animateEntry: boolean;
 }) {
   const reduceMotion = useReducedMotion();
   const step = String(index + 1).padStart(2, "0");
   const categoryLabel = item.categories[0];
+  const shouldAnimateEntry = animateEntry && !reduceMotion;
 
   return (
     <motion.li
       layout={!reduceMotion}
-      initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+      initial={shouldAnimateEntry ? { opacity: 0, y: 8 } : false}
       animate={{ opacity: 1, y: 0 }}
       exit={reduceMotion ? undefined : { opacity: 0, y: -8 }}
       transition={{ duration: 0.26, ease: easePremium }}
@@ -131,6 +133,7 @@ function EventGalleryItem({
 export function EventsSection() {
   const [activeFilter, setActiveFilter] = useState<EventFilter>("all");
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [hasFiltered, setHasFiltered] = useState(false);
   const lastTriggerRef = useRef<HTMLButtonElement | null>(null);
   const reduceMotion = useReducedMotion();
 
@@ -144,9 +147,13 @@ export function EventsSection() {
     [visibleItems]
   );
 
-  useEffect(() => {
+  const handleFilterChange = (filter: EventFilter) => {
+    if (filter === activeFilter) return;
+
+    setHasFiltered(true);
+    setActiveFilter(filter);
     setSelectedIndex(null);
-  }, [activeFilter]);
+  };
 
   const handleOpenLightbox = (
     item: EventItem,
@@ -162,71 +169,70 @@ export function EventsSection() {
   return (
     <Section id="events" className="scroll-mt-32 pt-6 md:pt-10">
       <Container>
-        <Reveal>
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="text-eyebrow text-text-tertiary">Our events</p>
-            <h2 className="mt-4 text-display-sm">
-              <span className="block font-semibold text-text-primary">
-                Pictures of different activities
-              </span>
-              <span className="mt-1 block font-medium text-text-tertiary">
-                in the application
-              </span>
-            </h2>
+        <div className="mx-auto max-w-2xl text-center">
+          <p className="text-eyebrow text-text-tertiary">Our events</p>
+          <h2 className="mt-4 text-display-sm">
+            <span className="block font-semibold text-text-primary">
+              Pictures of different activities
+            </span>
+            <span className="mt-1 block font-medium text-text-tertiary">
+              in the application
+            </span>
+          </h2>
+        </div>
+
+        <div
+          className="mt-8 flex justify-center md:mt-10"
+          role="toolbar"
+          aria-label="Filter gallery"
+        >
+          <div className="inline-flex max-w-full flex-wrap items-center justify-center gap-0.5 rounded-full bg-surface-muted/60 p-1">
+            {EVENT_FILTERS.map((filter) => {
+              const isActive = activeFilter === filter.id;
+
+              return (
+                <button
+                  key={filter.id}
+                  type="button"
+                  aria-pressed={isActive}
+                  onClick={() => handleFilterChange(filter.id)}
+                  className={cn(
+                    "rounded-full px-3.5 py-1.5 text-[0.8125rem] font-medium transition-all duration-200",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                    isActive
+                      ? "bg-brand-soft text-brand shadow-none"
+                      : "text-text-secondary hover:text-text-primary"
+                  )}
+                >
+                  {filter.label}
+                </button>
+              );
+            })}
           </div>
+        </div>
 
-          <div
-            className="mt-8 flex justify-center md:mt-10"
-            role="toolbar"
-            aria-label="Filter gallery"
-          >
-            <div className="inline-flex max-w-full flex-wrap items-center justify-center gap-0.5 rounded-full bg-surface-muted/60 p-1">
-              {EVENT_FILTERS.map((filter) => {
-                const isActive = activeFilter === filter.id;
+        <motion.ul
+          layout={!reduceMotion}
+          className="mx-auto mt-10 grid max-w-5xl grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 sm:gap-x-7 lg:grid-cols-3 lg:gap-x-8 lg:gap-y-11"
+        >
+          <AnimatePresence mode="popLayout">
+            {visibleItems.map((item) => {
+              const index = EVENT_ITEMS.findIndex(
+                (entry) => entry.id === item.id
+              );
 
-                return (
-                  <button
-                    key={filter.id}
-                    type="button"
-                    aria-pressed={isActive}
-                    onClick={() => setActiveFilter(filter.id)}
-                    className={cn(
-                      "rounded-full px-3.5 py-1.5 text-[0.8125rem] font-medium transition-all duration-200",
-                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-                      isActive
-                        ? "bg-brand-soft text-brand shadow-none"
-                        : "text-text-secondary hover:text-text-primary"
-                    )}
-                  >
-                    {filter.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          <motion.ul
-            layout={!reduceMotion}
-            className="mx-auto mt-10 grid max-w-5xl grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 sm:gap-x-7 lg:grid-cols-3 lg:gap-x-8 lg:gap-y-11"
-          >
-            <AnimatePresence mode="popLayout">
-              {visibleItems.map((item) => {
-                const index = EVENT_ITEMS.findIndex(
-                  (entry) => entry.id === item.id
-                );
-
-                return (
-                  <EventGalleryItem
-                    key={item.id}
-                    item={item}
-                    index={index >= 0 ? index : 0}
-                    onSelect={handleOpenLightbox}
-                  />
-                );
-              })}
-            </AnimatePresence>
-          </motion.ul>
-        </Reveal>
+              return (
+                <EventGalleryItem
+                  key={item.id}
+                  item={item}
+                  index={index >= 0 ? index : 0}
+                  onSelect={handleOpenLightbox}
+                  animateEntry={hasFiltered}
+                />
+              );
+            })}
+          </AnimatePresence>
+        </motion.ul>
       </Container>
 
       <EventGalleryLightbox
