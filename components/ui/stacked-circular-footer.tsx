@@ -50,12 +50,12 @@ const socials = [
 
 export function StackedCircularFooter() {
   return (
-    <footer className="bg-footer-surface py-16 md:py-20">
-      <div className="container mx-auto px-4 md:px-6">
-        <div className="flex flex-col items-center">
+    <footer className="bg-footer-surface py-14 sm:py-16 md:py-20">
+      <div className="container mx-auto px-5 sm:px-6">
+        <div className="flex flex-col items-center text-center">
           <Link
             href="/#hero"
-            className="mb-8 flex size-20 items-center justify-center rounded-full bg-brand-soft"
+            className="mb-6 flex size-20 items-center justify-center rounded-full bg-brand-soft sm:mb-8"
             aria-label={`${site.name} home`}
           >
             <Image
@@ -66,7 +66,10 @@ export function StackedCircularFooter() {
               className="size-10 rounded-xl object-cover"
             />
           </Link>
-          <nav aria-label="Footer" className="mb-8 flex flex-wrap justify-center gap-6">
+          <nav
+            aria-label="Footer"
+            className="mb-6 flex w-full max-w-md flex-wrap items-center justify-center gap-x-5 gap-y-3 sm:mb-8 sm:max-w-none sm:gap-6"
+          >
             {footerLinks.map((link) => (
               <Link
                 key={link.href}
@@ -77,7 +80,7 @@ export function StackedCircularFooter() {
               </Link>
             ))}
           </nav>
-          <div className="mb-8 flex space-x-4">
+          <div className="mb-6 flex items-center justify-center gap-3 sm:mb-8">
             {socials.map((social) => {
               const Icon = social.icon;
               return (
@@ -97,11 +100,9 @@ export function StackedCircularFooter() {
               );
             })}
           </div>
-          <div>
-            <span className="text-small text-muted-foreground">
-              © {new Date().getFullYear()} {site.name}. All rights reserved.
-            </span>
-          </div>
+          <p className="text-small text-muted-foreground">
+            © {new Date().getFullYear()} {site.name}. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>

@@ -68,19 +68,71 @@ export const productFeatures: ProductFeature[] = [
 
 export const painPoints = [
   {
-    title: "Hard to find a room that fits.",
-    detail: "Too much noise, not enough signal.",
-    icon: "mic" as const,
+    title: "Private chats",
+    detail:
+      "Start private text and voice conversations with friends anywhere.",
+    icon: "message" as const,
   },
   {
-    title: "Conversations feel empty.",
-    detail: "Scroll past, never stay.",
-    icon: "radio" as const,
+    title: "Send gifts",
+    detail:
+      "Share gifts with your favorite friends in private rooms or moments.",
+    icon: "gift" as const,
   },
   {
-    title: "Hard to feel like you belong.",
-    detail: "Followers aren't friends.",
-    icon: "heart" as const,
+    title: "Virtual gifts",
+    detail: "Send stunning animated gifts to show your support.",
+    icon: "sparkles" as const,
+  },
+];
+
+export type Service = {
+  id: string;
+  step: string;
+  title: string;
+  description: string;
+  bullets: string[];
+  visual: "rooms" | "gifts" | "games";
+  image: string | null;
+};
+
+export const services: Service[] = [
+  {
+    id: "rooms",
+    step: "01",
+    title: "Private & Public Rooms",
+    description:
+      "Endless number of rooms with members from 50 different countries",
+    bullets: [
+      "Open Mic & Public Rooms – Chat, sing, and showcase your talent",
+      "VIP Privileges – Unique colors, special badges, and full control",
+      "Private Rooms – Full privacy and conversation control.",
+    ],
+    visual: "rooms",
+    image: "/services/Discover%20rooms.webp",
+  },
+  {
+    id: "gifts",
+    step: "02",
+    title: "Gifts & Special Features",
+    description:
+      "Ongoing entertainment events and competitions to keep the fun alive—no room for boredom!.",
+    bullets: [
+      "Send and receive gifts from friends and share special moments",
+      "Explore private accounts and stand out with your unique style",
+      "Create challenges with your friends",
+    ],
+    visual: "gifts",
+    image: "/services/leader%20board.webp",
+  },
+  {
+    id: "games",
+    step: "03",
+    title: "Games",
+    description: "FUnique and diverse games with amazing rewards await you.",
+    bullets: ["Dice Challenge", "Candy Game", "Buraco Card"],
+    visual: "games",
+    image: "/services/games.webp",
   },
 ];
 
@@ -137,63 +189,32 @@ export const liveStats = [
 
 export const faqs = [
   {
-    question: "What is W Live?",
-    answer:
-      "W Live is a live voice social app built around real-time conversations, communities, and discovery. Jump into rooms, meet people who share your interests, and connect in the moment.",
+    question: "How to recharge coins?",
+    answer: "You can pay using a MasterCard or via Apple Pay .",
   },
   {
-    question: "How do voice rooms work?",
+    question: "My recharge is not successful but my money is deducted",
     answer:
-      "Browse what's live, tap a room, and you're in. Listen to the conversation and open your mic when you want to join in.",
+      "Contact us via email at INFO@WLIVE.com attach a screenshot of your receipt and bank .",
   },
   {
-    question: "Do I have to speak when I join a room?",
+    question: "I can't receive verification codes!",
     answer:
-      "Not at all. Plenty of people join just to listen, get a feel for the room, and enjoy the conversation without saying a word.",
+      "Some old versions of W.Live don't have this feature. If you are using one of those versions, please update W.Live to the lastest version so you can give us feedback",
   },
   {
-    question: "How do I discover new rooms and communities?",
+    question: "I have a problem with the microphone in a room.",
     answer:
-      "Explore live rooms by topic, mood, or country, and browse communities built around shared interests. W Live is designed to surface conversations worth joining.",
+      "If the microphone isn't working, check app permissions in your phone settings and allow W.Live to record audio. For further assistance, contact us at wbluetrading@gmail.com.",
   },
   {
-    question: "Can I stay connected after leaving a room?",
+    question: "Can I bind my phone number to my account?",
     answer:
-      "Yes. Profiles, private chats, and community presence help you keep in touch with people you meet, even after the room ends.",
+      "For security reasons, a phone number can only be bind once and cannot be unbound. Tap your profile photo at the top, go to Settings, then Account, then Phone, and finally select Bind Phone Number.",
   },
   {
-    question: "Does W Live support private conversations?",
+    question: 'How can I get "Post Talent" badge?',
     answer:
-      "Yes. You can send text and voice messages to friends directly in the app — a quieter way to stay close when you're not in a room.",
-  },
-  {
-    question: "What are gifts on W Live?",
-    answer:
-      "Gifts are animated gestures you send during live moments in rooms. They're a simple way to show appreciation or add a little energy to the conversation.",
-  },
-  {
-    question: "Can I create my own voice room?",
-    answer:
-      "Yes. You can set up your own room in the app — add a name and announcement, then invite others to join you.",
-  },
-  {
-    question: "How does W Live keep the community safe?",
-    answer:
-      "W Live includes report and block tools, plus moderation support to help keep rooms respectful. Community guidelines set clear expectations for how people treat each other.",
-  },
-  {
-    question: "Is W Live available on iPhone and Android?",
-    answer:
-      "Yes. Download W Live on the App Store or Google Play — use the download buttons on this page to get started.",
-  },
-  {
-    question: "Can I use W Live just to listen?",
-    answer:
-      "Absolutely. Listening is a big part of the experience. Join rooms, enjoy the conversation, and speak only when you feel like it.",
-  },
-  {
-    question: "What makes W Live different from regular messaging apps?",
-    answer:
-      "Messaging apps are built for back-and-forth texts. W Live is built for live voice — real people talking right now, in rooms you can discover and communities you can belong to.",
+      'If you have 5,000 posts get featured, you will receive the golden "Post Talent" badge and can wear it.',
   },
 ];

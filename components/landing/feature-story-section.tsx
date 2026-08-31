@@ -6,96 +6,12 @@ import { Reveal } from "@/components/landing/reveal";
 import { cn } from "@/lib/utils";
 
 const cardHover =
-  "transition-all duration-300 ease-out hover:border-brand/25 hover:shadow-soft motion-safe:hover:-translate-y-0.5";
-
-function StoryVisual({
-  title,
-  lines,
-}: {
-  title: string;
-  lines: string[];
-}) {
-  return (
-    <div
-      className={cn(
-        "group rounded-section border border-border bg-card-elevated p-6 sm:p-8",
-        cardHover,
-        "hover:bg-brand-soft/30"
-      )}
-    >
-      <p className="text-caption text-text-tertiary transition-colors duration-300 group-hover:text-text-secondary">
-        {title}
-      </p>
-      <ul className="mt-5 space-y-3">
-        {lines.map((line, index) => (
-          <li
-            key={line}
-            className={cn(
-              "rounded-2xl bg-card-raised px-4 py-3.5 text-small text-text-primary transition-colors duration-300",
-              "hover:bg-brand-soft/50",
-              index === 0 && "ring-1 ring-border group-hover:ring-brand/20"
-            )}
-          >
-            {line}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
+  "transition-all duration-300 ease-out hover:border-brand/25 hover:bg-brand-soft/30 hover:shadow-soft motion-safe:hover:-translate-y-0.5";
 
 export function FeatureStorySection() {
   return (
     <Section id="community" className="scroll-mt-28">
-      <Container className="space-y-[var(--section-y-sm)] md:space-y-24">
-        <Reveal>
-          <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-            <div className="max-w-xl">
-              <p className="text-eyebrow text-text-tertiary">Voice rooms</p>
-              <h2 className="mt-4 text-h1 text-text-primary">
-                Rooms that feel alive.
-              </h2>
-              <p className="mt-4 text-body-lg text-text-secondary">
-                Open mic, music, games, or late-night talk — drop in when you
-                want company and stay as long as it feels right.
-              </p>
-            </div>
-            <StoryVisual
-              title="Live now"
-              lines={[
-                "Open mic · 24 listening",
-                "Music night · 18 in room",
-                "Late talk · 9 speakers",
-              ]}
-            />
-          </div>
-        </Reveal>
-
-        <Reveal>
-          <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-            <div className="order-1 max-w-xl lg:order-2">
-              <p className="text-eyebrow text-text-tertiary">Belonging</p>
-              <h2 className="mt-4 text-h1 text-text-primary">
-                Communities, not crowds.
-              </h2>
-              <p className="mt-4 text-body-lg text-text-secondary">
-                Find people who share your language, interests, and energy.
-                Followers aren&apos;t friends — rooms are.
-              </p>
-            </div>
-            <div className="order-2 lg:order-1">
-              <StoryVisual
-                title="Your groups"
-                lines={[
-                  "Arabic lounge · 1.2K members",
-                  "Gaming crew · 840 members",
-                  "Poetry hour · 320 members",
-                ]}
-              />
-            </div>
-          </div>
-        </Reveal>
-
+      <Container>
         <Reveal>
           <div className="grid gap-4 md:grid-cols-3">
             <article

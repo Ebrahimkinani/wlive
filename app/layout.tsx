@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter_Tight } from "next/font/google";
 import "./globals.css";
 
+import { StripExtensionAttrsScript } from "@/components/strip-extension-attrs-script";
 import { ThemeProvider } from "@/components/theme-provider";
 import { site } from "@/config/site";
 
@@ -27,10 +28,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${interTight.variable} dark h-full antialiased`}
+      className={`${interTight.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col bg-background text-foreground font-sans">
+      <body
+        className="min-h-full flex flex-col bg-background text-foreground font-sans"
+        suppressHydrationWarning
+      >
+        <StripExtensionAttrsScript />
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>

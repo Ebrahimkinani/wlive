@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 
+import { AuthBackLink } from "@/components/landing/auth-back-link";
 import { AuthForm } from "@/components/landing/auth-form";
+import { AuthScrollMark } from "@/components/landing/auth-scroll-mark";
 import { site } from "@/config/site";
 
 export const metadata: Metadata = {
@@ -11,9 +12,8 @@ export const metadata: Metadata = {
 export default function LoginPage() {
   return (
     <main className="flex min-h-svh flex-col justify-center px-5 py-16">
-      <Link href="/" className="mb-10 text-small text-text-tertiary hover:text-text-primary">
-        ← {site.name}
-      </Link>
+      <AuthScrollMark />
+      <AuthBackLink siteName={site.name} />
       <AuthForm mode="login" />
     </main>
   );

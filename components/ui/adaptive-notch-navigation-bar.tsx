@@ -46,7 +46,7 @@ function Island({
   return (
     <div
       className={cn(
-        "relative z-10 flex h-11 items-center bg-nav-surface text-nav-foreground",
+        "relative z-10 flex h-11 items-center border border-border/50 bg-nav-surface text-nav-foreground backdrop-blur-xl",
         className
       )}
       style={style}
@@ -80,7 +80,7 @@ export function NotchNav({
   return (
     <div
       className={cn(
-        "pointer-events-none fixed inset-x-0 z-50 flex justify-center px-3 sm:px-5",
+        "pointer-events-none fixed inset-x-0 z-50 flex justify-center px-2 sm:px-3 md:px-5",
         pinClass,
         className
       )}
@@ -89,7 +89,7 @@ export function NotchNav({
         {/* Desktop triple-island */}
         <nav
           aria-labelledby={labelId}
-          className="hidden md:flex items-center justify-center gap-2 [filter:drop-shadow(0_8px_32px_rgb(0_0_0/0.28))]"
+          className="hidden md:flex items-center justify-center gap-2 filter-[drop-shadow(var(--nav-drop-shadow))]"
         >
           <span id={labelId} className="sr-only">
             Primary
@@ -147,13 +147,10 @@ export function NotchNav({
         </nav>
 
         {/* Mobile compact drawer */}
-        <div className="md:hidden">
-          <Island className="w-full max-w-[calc(100vw-1.5rem)] justify-between rounded-2xl px-3 [filter:drop-shadow(0_8px_32px_rgb(0_0_0/0.28))]">
-            <div className="flex min-w-0 items-center">{showLogo ? logo : null}</div>
-            <div className="flex items-center gap-1">
-              {showRightContent ? (
-                <div className="hidden min-[430px]:flex">{rightContent}</div>
-              ) : null}
+        <div className="md:hidden w-[min(100%,calc(100vw-1rem))]">
+          <Island className="h-10 w-full justify-between rounded-2xl px-2.5 sm:h-11 sm:px-3 filter-[drop-shadow(var(--nav-drop-shadow))]">
+            <div className="flex min-w-0 flex-1 items-center pr-2">{showLogo ? logo : null}</div>
+            <div className="flex shrink-0 items-center">
               <button
                 type="button"
                 className="flex size-8 items-center justify-center rounded-full text-nav-foreground hover:bg-nav-icon-hover"
@@ -175,7 +172,7 @@ export function NotchNav({
                 animate={{ opacity: 1, y: 0 }}
                 exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}
                 transition={{ duration: 0.28, ease: easePremium }}
-                className="mt-2 overflow-hidden rounded-2xl bg-nav-surface p-2 [filter:drop-shadow(0_8px_32px_rgb(0_0_0/0.28))]"
+                className="mt-2 overflow-hidden rounded-2xl bg-nav-surface p-2 filter-[drop-shadow(var(--nav-drop-shadow))]"
               >
                 <ul className="flex flex-col">
                   {items.map((item) => {
@@ -206,8 +203,10 @@ export function NotchNav({
                   })}
                 </ul>
                 {showRightContent ? (
-                  <div className="mt-1 border-t border-border px-2 py-2 min-[430px]:hidden">
-                    {rightContent}
+                  <div className="mt-2 border-t border-border px-2 py-3">
+                    <div className="flex flex-wrap items-center justify-center gap-2">
+                      {rightContent}
+                    </div>
                   </div>
                 ) : null}
               </motion.div>

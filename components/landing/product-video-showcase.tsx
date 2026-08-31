@@ -1,283 +1,156 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Volume2, VolumeX } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 import { cn } from "@/lib/utils";
 
-const VIDEO_ID = "l4YUtf3aH54";
-const SEGMENT_START = 6;
-const SEGMENT_END = 24;
-const IFRAME_ID = "wlive-product-video";
-
-type YTPlayerInstance = {
-  playVideo: () => void;
-  seekTo: (seconds: number, allowSeekAhead?: boolean) => void;
-  getCurrentTime: () => number;
-  getPlayerState: () => number;
-  destroy: () => void;
-  unloadModule?: (moduleName: string) => void;
-  setOption?: (module: string, option: string, value: unknown) => void;
-};
-
-declare global {
-  interface Window {
-    YT?: {
-      Player: new (
-        elementId: string | HTMLElement,
-        options?: {
-          events?: {
-            onReady?: (event: { target: YTPlayerInstance }) => void;
-            onStateChange?: (event: { data: number; target: YTPlayerInstance }) => void;
-          };
-        }
-      ) => YTPlayerInstance;
-      PlayerState: {
-        ENDED: number;
-        PLAYING: number;
-        PAUSED: number;
-        UNSTARTED: number;
-        CUED: number;
-      };
-    };
-    onYouTubeIframeAPIReady?: () => void;
-  }
-}
-
-function buildEmbedSrc(origin: string) {
-  const params = new URLSearchParams({
-    autoplay: "1",
-    mute: "1",
-    controls: "0",
-    playsinline: "1",
-    modestbranding: "1",
-    rel: "0",
-    start: String(SEGMENT_START),
-    fs: "0",
-    iv_load_policy: "3",
-    disablekb: "1",
-    enablejsapi: "1",
-    cc_load_policy: "0",
-    origin,
-  });
-
-  return `https://www.youtube.com/embed/${VIDEO_ID}?${params.toString()}`;
-}
-
-function waitForYouTubeAPI(timeoutMs = 8000) {
-  if (window.YT?.Player) {
-    return Promise.resolve();
-  }
-
-  return new Promise<void>((resolve, reject) => {
-    const startedAt = Date.now();
-    const previousReady = window.onYouTubeIframeAPIReady;
-
-    window.onYouTubeIframeAPIReady = () => {
-      previousReady?.();
-      resolve();
-    };
-
-    if (!document.querySelector('script[src*="youtube.com/iframe_api"]')) {
-      const script = document.createElement("script");
-      script.src = "https://www.youtube.com/iframe_api";
-      script.async = true;
-      document.head.appendChild(script);
-    }
-
-    const poll = () => {
-      if (window.YT?.Player) {
-        resolve();
-        return;
-      }
-
-      if (Date.now() - startedAt > timeoutMs) {
-        reject(new Error("YouTube API unavailable"));
-        return;
-      }
-
-      window.requestAnimationFrame(poll);
-    };
-
-    poll();
-  });
-}
-
-function restartSegment(player: YTPlayerInstance) {
-  player.seekTo(SEGMENT_START, true);
-  player.playVideo();
-}
-
-function disableCaptions(player: YTPlayerInstance) {
-  try {
-    player.unloadModule?.("captions");
-  } catch {
-    // Captions module may be unavailable.
-  }
-
-  try {
-    player.setOption?.("captions", "track", {});
-  } catch {
-    // setOption may be unavailable depending on embed policy.
-  }
-}
+const VIDEO_SRC = "/ads.mp4";
+const IN_VIEW_THRESHOLD = 0.35;
 
 export function ProductVideoShowcase() {
-  const playerRef = useRef<YTPlayerInstance | null>(null);
-  const loopTimerRef = useRef<number | null>(null);
-  const autoplayTimerRef = useRef<number | null>(null);
-  const apiAttachedRef = useRef(false);
+  const containerRef = useRef<HTMLElement>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const isVisibleRef = useRef(false);
 
-  const [embedSrc, setEmbedSrc] = useState<string | null>(null);
-  const [loaded, setLoaded] = useState(false);
-  const [needsInteraction, setNeedsInteraction] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
 
-  useEffect(() => {
-    setEmbedSrc(buildEmbedSrc(window.location.origin));
-  }, []);
-
-  const attachLoopControls = useCallback(async () => {
-    if (apiAttachedRef.current) return;
-
-    const iframe = document.getElementById(IFRAME_ID) as HTMLIFrameElement | null;
-    if (!iframe) return;
-
-    try {
-      await waitForYouTubeAPI();
-    } catch {
-      return;
-    }
-
-    if (!window.YT?.Player || apiAttachedRef.current) return;
-
-    apiAttachedRef.current = true;
-
-    const player = new window.YT.Player(iframe, {
-      events: {
-        onReady: ({ target }) => {
-          playerRef.current = target;
-          disableCaptions(target);
-          restartSegment(target);
-
-          loopTimerRef.current = window.setInterval(() => {
-            try {
-              if (target.getCurrentTime() >= SEGMENT_END - 0.2) {
-                restartSegment(target);
-              }
-            } catch {
-              // Player may already be destroyed.
-            }
-          }, 200);
-        },
-        onStateChange: ({ data, target }) => {
-          const { ENDED, PAUSED, PLAYING } = window.YT!.PlayerState;
-
-          if (data === PLAYING) {
-            disableCaptions(target);
-            setNeedsInteraction(false);
-          }
-
-          if (data === ENDED) {
-            restartSegment(target);
-            return;
-          }
-
-          if (data === PAUSED && target.getCurrentTime() >= SEGMENT_END - 0.35) {
-            restartSegment(target);
-          }
-        },
-      },
-    });
-
-    playerRef.current = player;
-  }, []);
+  const effectiveMuted = !isVisible || isMuted;
 
   useEffect(() => {
-    return () => {
-      if (loopTimerRef.current) window.clearInterval(loopTimerRef.current);
-      if (autoplayTimerRef.current) window.clearTimeout(autoplayTimerRef.current);
-      playerRef.current?.destroy();
-      playerRef.current = null;
-      apiAttachedRef.current = false;
-    };
-  }, []);
+    const container = containerRef.current;
+    if (!container) return;
 
-  const handleIframeLoad = () => {
-    setLoaded(true);
-    void attachLoopControls();
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const visible =
+          entry.isIntersecting && entry.intersectionRatio >= IN_VIEW_THRESHOLD;
 
-    autoplayTimerRef.current = window.setTimeout(() => {
-      if (playerRef.current) {
-        const state = playerRef.current.getPlayerState();
-        const { UNSTARTED, CUED, PAUSED, PLAYING } = window.YT?.PlayerState ?? {};
-        if (
-          state !== PLAYING &&
-          (state === UNSTARTED || state === CUED || state === PAUSED)
-        ) {
-          setNeedsInteraction(true);
+        if (visible === isVisibleRef.current) return;
+        isVisibleRef.current = visible;
+        setIsVisible(visible);
+
+        const video = videoRef.current;
+        if (!video) return;
+
+        if (visible) {
+          video.muted = true;
+          setIsMuted(true);
+          video.play().catch(() => {
+            // Autoplay may be blocked by the browser.
+          });
+        } else {
+          video.muted = true;
+          video.pause();
+          setIsMuted(true);
         }
+      },
+      {
+        threshold: [0, IN_VIEW_THRESHOLD, 0.5],
+        rootMargin: "0px 0px -15% 0px",
       }
-    }, 2000);
-  };
+    );
 
-  useEffect(() => {
-    const fallback = window.setTimeout(() => {
-      setLoaded(true);
-    }, 2500);
+    observer.observe(container);
 
-    return () => window.clearTimeout(fallback);
+    return () => observer.disconnect();
   }, []);
 
-  const handlePlay = () => {
-    if (playerRef.current) {
-      disableCaptions(playerRef.current);
-      restartSegment(playerRef.current);
-      setNeedsInteraction(false);
-      return;
-    }
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      const video = videoRef.current;
+      if (!video) return;
 
-    const iframe = document.getElementById(IFRAME_ID) as HTMLIFrameElement | null;
-    if (iframe) {
-      iframe.src = buildEmbedSrc(window.location.origin);
-      setLoaded(true);
-      setNeedsInteraction(false);
+      if (document.hidden) {
+        video.muted = true;
+        video.pause();
+        setIsMuted(true);
+      } else if (isVisibleRef.current) {
+        video.muted = true;
+        setIsMuted(true);
+        video.play().catch(() => {
+          // Autoplay may be blocked by the browser.
+        });
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, []);
+
+  const handleToggleMute = () => {
+    const video = videoRef.current;
+
+    if (!video || !isVisibleRef.current) return;
+
+    if (video.muted) {
+      video.muted = false;
+      video.volume = 1;
+
+      video.play().catch(() => {
+        // Playback may be blocked by the browser.
+      });
+
+      setIsMuted(false);
+    } else {
+      video.muted = true;
+      setIsMuted(true);
     }
   };
 
   return (
-    <figure className="relative aspect-video w-full overflow-hidden bg-surface-muted">
-      <div className="absolute inset-0 overflow-hidden">
-        {embedSrc ? (
-          <iframe
-            id={IFRAME_ID}
-            src={embedSrc}
-            title="W Live app experience preview"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerPolicy="strict-origin-when-cross-origin"
-            onLoad={handleIframeLoad}
-            className={cn(
-              "absolute inset-0 size-full border-0 transition-opacity duration-700 ease-out",
-              loaded ? "opacity-100" : "opacity-0"
-            )}
-          />
-        ) : null}
+    <figure
+      ref={containerRef}
+      className="relative aspect-[10/16] w-full overflow-hidden sm:aspect-[3/4] md:aspect-[16/10] lg:aspect-video"
+    >
+      <div className="absolute inset-0 z-0 bg-video-showcase" aria-hidden />
+      <div className="absolute inset-0 z-0 bg-video-showcase-glow" aria-hidden />
+      <div
+        className="pointer-events-none absolute inset-0 z-0 bg-video-showcase-edge max-md:opacity-50 md:opacity-100"
+        aria-hidden
+      />
+
+      <div className="relative z-10 flex h-full w-full items-center justify-center">
+        <div
+          className={cn(
+            "relative z-10 h-full max-h-full w-auto shrink-0 aspect-[9/16]",
+            "max-w-[98%] sm:max-w-[88%] md:max-w-[62%] lg:max-w-[48%] xl:max-w-[44%]"
+          )}
+        >
+          <video
+            ref={videoRef}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            className="block h-full w-full object-contain"
+            aria-label="W Live app experience preview"
+          >
+            <source src={VIDEO_SRC} type="video/mp4" />
+          </video>
+        </div>
       </div>
 
-      {!loaded ? (
-        <div
-          className="absolute inset-0 bg-surface-muted motion-safe:animate-pulse"
-          aria-hidden
-        />
-      ) : null}
-
-      {needsInteraction ? (
-        <button
-          type="button"
-          onClick={handlePlay}
-          className="absolute inset-0 z-10 flex items-end justify-center bg-background/10 pb-6 text-caption text-text-secondary backdrop-blur-[1px] transition-colors hover:text-text-primary sm:items-center sm:pb-0"
-        >
-          Tap to play preview
-        </button>
-      ) : null}
+      <button
+        type="button"
+        onClick={(event) => {
+          event.stopPropagation();
+          handleToggleMute();
+        }}
+        aria-label={effectiveMuted ? "Unmute video" : "Mute video"}
+        aria-pressed={!effectiveMuted}
+        className="pointer-events-auto absolute bottom-3 right-3 z-20 inline-flex size-11 items-center justify-center rounded-full border border-white/15 bg-black/40 text-white/90 shadow-soft backdrop-blur-sm transition-[background-color,transform] hover:bg-black/55 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+      >
+        {effectiveMuted ? (
+          <VolumeX className="size-[1.125rem]" aria-hidden />
+        ) : (
+          <Volume2 className="size-[1.125rem]" aria-hidden />
+        )}
+      </button>
 
       <figcaption className="sr-only">W Live app experience preview</figcaption>
     </figure>

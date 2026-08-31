@@ -1,28 +1,30 @@
 import type { NotchItemData } from "@/components/ui/adaptive-notch-navigation-bar";
 import {
+  Award,
   CircleHelp,
-  Layers3,
-  Radio,
+  Coins,
+  Images,
+  Info,
+  Mail,
   Route,
-  Shield,
+  Sparkles,
   Users,
 } from "lucide-react";
 
 export const navItems: NotchItemData[] = [
-  { id: "product", label: "Live", icon: Radio },
-  { id: "features", label: "Features", icon: Layers3 },
+  { id: "about", label: "About", icon: Info },
+  // { id: "features", label: "Features", icon: Layers3 },
   { id: "how-it-works", label: "How it works", icon: Route },
+  { id: "services", label: "Services", icon: Sparkles },
+  { id: "events", label: "Events", icon: Images },
+  { id: "certificates", label: "Certificates", icon: Award },
+  { id: "currency", label: "Currency", icon: Coins },
   { id: "community", label: "Community", icon: Users },
-  { id: "safety", label: "Safety", icon: Shield },
   { id: "faq", label: "FAQ", icon: CircleHelp },
+  { id: "contact", label: "Contact", icon: Mail },
 ];
 
-export const footerLinks = [
-  { href: "#product", label: "Live" },
-  { href: "#features", label: "Features" },
-  { href: "#how-it-works", label: "How it works" },
-  { href: "#community", label: "Community" },
-  { href: "#activity", label: "Activity" },
-  { href: "#safety", label: "Safety" },
-  { href: "#faq", label: "FAQ" },
-] as const;
+export const footerLinks = navItems.map((item) => ({
+  href: `#${item.id}`,
+  label: item.label,
+})) as { href: string; label: string }[];

@@ -66,7 +66,7 @@ export function LandingHeader() {
     <Link
       href="/#hero"
       onClick={handleLogoClick}
-      className="flex h-8 items-center gap-2"
+      className="flex h-8 min-w-0 items-center gap-1.5 sm:gap-2"
     >
       <Image
         src="/logo.png"
@@ -75,14 +75,14 @@ export function LandingHeader() {
         height={24}
         className="size-6 rounded-md object-cover"
       />
-      <span className="text-nav font-semibold text-nav-foreground">
+      <span className="truncate text-nav font-semibold text-nav-foreground">
         {site.name}
       </span>
     </Link>
   );
 
   const rightContent = (
-    <div className="flex items-center gap-1.5">
+    <div className="flex items-center justify-center gap-1 sm:gap-1.5">
       <ThemeToggle />
       <StoreActions variant="nav" />
       <AuthMenu />

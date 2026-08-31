@@ -32,13 +32,14 @@
   --text-secondary: #737985;
   --text-tertiary: #9aa0aa;
 
-  --nav-surface: #141619;
-  --nav-foreground: #f4f6f8;
-  --nav-muted: rgb(244 246 248 / 0.55);
-  --nav-active: rgb(244 246 248 / 0.12);
-  --nav-icon-hover: rgb(244 246 248 / 0.14);
+  --nav-surface: #12151a;
+  --nav-foreground: #f5f7f9;
+  --nav-muted: rgb(245 247 249 / 0.55);
+  --nav-active: #242930;
+  --nav-icon-hover: rgb(255 255 255 / 0.1);
   --nav-control: rgb(255 255 255 / 0.08);
   --nav-shadow: 0 8px 32px rgb(0 0 0 / 0.28), 0 1px 0 rgb(255 255 255 / 0.04) inset;
+  --nav-drop-shadow: 0 8px 32px rgb(0 0 0 / 0.28);
 
   --hero-background: transparent;
   --hero-glow-primary: radial-gradient(
@@ -70,6 +71,26 @@
     rgb(230 245 252 / 0.35) 45%,
     transparent 100%
   );
+  --video-showcase-bg: linear-gradient(
+    135deg,
+    #060a10 0%,
+    #0a1219 50%,
+    #081018 100%
+  );
+  --video-showcase-glow: radial-gradient(
+    ellipse 50% 80% at 50% 50%,
+    rgb(20 45 65 / 0.8) 0%,
+    rgb(12 28 40 / 0.5) 35%,
+    transparent 70%
+  );
+  --video-showcase-edge: linear-gradient(
+    to right,
+    rgb(4 8 14 / 0.88) 0%,
+    transparent 20%,
+    transparent 80%,
+    rgb(4 8 14 / 0.88) 100%
+  );
+  --video-showcase-border: rgb(20 40 58 / 0.32);
   --feature-active: var(--brand-100);
   --step-tile: var(--brand-50);
   --step-tile-accent: var(--brand-100);
@@ -152,12 +173,14 @@
   --text-secondary: #9ba3ad;
   --text-tertiary: #6f7781;
 
-  --nav-surface: #12151a;
-  --nav-foreground: #f5f7f9;
-  --nav-muted: rgb(245 247 249 / 0.55);
-  --nav-active: #242930;
-  --nav-icon-hover: rgb(255 255 255 / 0.1);
-  --nav-control: rgb(255 255 255 / 0.08);
+  --nav-surface: rgb(255 255 255 / 0.92);
+  --nav-foreground: #0b0d12;
+  --nav-muted: rgb(11 13 18 / 0.55);
+  --nav-active: rgb(11 13 18 / 0.06);
+  --nav-icon-hover: rgb(11 13 18 / 0.06);
+  --nav-control: rgb(15 23 42 / 0.06);
+  --nav-shadow: 0 8px 32px rgb(15 23 42 / 0.1), 0 1px 0 rgb(255 255 255 / 0.9) inset;
+  --nav-drop-shadow: 0 8px 32px rgb(15 23 42 / 0.12);
 
   --hero-background: transparent;
   --hero-glow-primary: radial-gradient(
@@ -190,6 +213,26 @@
     rgb(12 21 28 / 0.35) 45%,
     transparent 100%
   );
+  --video-showcase-bg: linear-gradient(
+    135deg,
+    #050810 0%,
+    #091018 50%,
+    #070d14 100%
+  );
+  --video-showcase-glow: radial-gradient(
+    ellipse 50% 80% at 50% 50%,
+    rgb(18 40 58 / 0.9) 0%,
+    rgb(10 24 36 / 0.6) 35%,
+    transparent 70%
+  );
+  --video-showcase-edge: linear-gradient(
+    to right,
+    rgb(3 6 12 / 0.95) 0%,
+    transparent 20%,
+    transparent 80%,
+    rgb(3 6 12 / 0.95) 100%
+  );
+  --video-showcase-border: rgb(255 255 255 / 0.06);
   --feature-active: rgb(50 174 232 / 0.1);
   --step-tile: #14181e;
   --step-tile-accent: rgb(50 174 232 / 0.12);
@@ -448,6 +491,18 @@
 
 @utility bg-showcase-panel {
   background: var(--showcase-panel);
+}
+
+@utility bg-video-showcase {
+  background: var(--video-showcase-bg);
+}
+
+@utility bg-video-showcase-glow {
+  background: var(--video-showcase-glow);
+}
+
+@utility bg-video-showcase-edge {
+  background: var(--video-showcase-edge);
 }
 
 @utility bg-hero-background {

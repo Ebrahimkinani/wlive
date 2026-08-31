@@ -1,4 +1,4 @@
-import { Heart, Mic, Radio } from "lucide-react";
+import { Gift, MessageCircle, Sparkles } from "lucide-react";
 
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
@@ -7,9 +7,9 @@ import { painPoints } from "@/config/features";
 import { cn } from "@/lib/utils";
 
 const icons = {
-  mic: Mic,
-  radio: Radio,
-  heart: Heart,
+  message: MessageCircle,
+  gift: Gift,
+  sparkles: Sparkles,
 };
 
 export function PainPointsSection() {

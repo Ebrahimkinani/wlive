@@ -24,7 +24,7 @@ export function HeroSection() {
           <div className="mt-9 flex flex-wrap items-center justify-center gap-2">
             <StoreActions variant="page" />
           </div>
-          <p className="mt-4 text-caption text-text-tertiary">
+          <p className="mt-4 mb-8 text-caption text-text-tertiary sm:mb-0">
             Free to join. On iOS and Android.
           </p>
         </Reveal>

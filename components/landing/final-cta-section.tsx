@@ -10,10 +10,10 @@ export function FinalCtaSection() {
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-glow-cta opacity-80"
       />
-      <Container className="relative flex flex-col items-center text-center">
+      <Container className="relative flex flex-col items-center px-5 text-center sm:px-8">
         <Reveal>
           <p className="text-eyebrow text-text-tertiary">Download</p>
-          <h2 className="mt-5 max-w-[14ch] text-display text-text-primary">
+          <h2 className="mx-auto mt-5 max-w-[14ch] text-display text-text-primary">
             Join the conversation.
           </h2>
           <p className="mx-auto mt-5 max-w-md text-body-lg text-text-secondary">
