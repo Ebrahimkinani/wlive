@@ -33,19 +33,31 @@ function IconFacebook(props: SVGProps<SVGSVGElement>) {
   );
 }
 
-function IconLinkedIn(props: SVGProps<SVGSVGElement>) {
+function IconYouTube(props: SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden {...props}>
-      <path d="M6.5 9.5H3.7V20h2.8V9.5ZM5.1 4C4.2 4 3.4 4.8 3.4 5.7s.8 1.7 1.7 1.7 1.7-.8 1.7-1.7S6 4 5.1 4ZM20.3 20h-2.8v-5.1c0-1.2 0-2.8-1.7-2.8s-2 1.3-2 2.7V20h-2.8V9.5h2.7v1.4c.4-.7 1.3-1.6 2.8-1.6 3 0 3.5 2 3.5 4.6V20Z" />
+      <path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18 5 12 5 12 5s-6 0-7.8.4a2.5 2.5 0 0 0-1.8 1.8C2 9 2 12 2 12s0 3 .4 4.8a2.5 2.5 0 0 0 1.8 1.8C6 19 12 19 12 19s6 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8c.4-1.8.4-4.8.4-4.8s0-3-.4-4.8ZM10 15.5V8.5l5.5 3.5L10 15.5Z" />
     </svg>
   );
 }
 
 const socials = [
-  { href: "https://twitter.com", label: "X", icon: IconX },
-  { href: "https://instagram.com", label: "Instagram", icon: IconInstagram },
-  { href: "https://facebook.com", label: "Facebook", icon: IconFacebook },
-  { href: "https://linkedin.com", label: "LinkedIn", icon: IconLinkedIn },
+  { href: "https://x.com/wlive_apps", label: "X", icon: IconX },
+  {
+    href: "https://www.instagram.com/wliveqtr",
+    label: "Instagram",
+    icon: IconInstagram,
+  },
+  {
+    href: "https://www.facebook.com/people/Wlive-%D8%AA%D8%B7%D8%A8%D9%8A%D9%82-%D8%AF%D8%B1%D8%AF%D8%B4%D8%A9-%D8%B5%D9%88%D8%AA%D9%8A%D8%A9/61565389093486/",
+    label: "Facebook",
+    icon: IconFacebook,
+  },
+  {
+    href: "https://www.youtube.com/@WLiveOfficial",
+    label: "YouTube",
+    icon: IconYouTube,
+  },
 ];
 
 export function StackedCircularFooter() {
