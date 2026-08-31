@@ -56,6 +56,100 @@ function Island({
   );
 }
 
+function MenuToggleButton({
+  open,
+  onToggle,
+}: {
+  open: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      className="flex size-8 items-center justify-center rounded-full text-nav-foreground hover:bg-nav-icon-hover"
+      aria-expanded={open}
+      aria-controls="notch-compact-drawer"
+      aria-label={open ? "Close menu" : "Open menu"}
+      onClick={onToggle}
+    >
+      {open ? <X className="size-4" /> : <Menu className="size-4" />}
+    </button>
+  );
+}
+
+function CompactNavDrawer({
+  open,
+  items,
+  activeId,
+  onActiveChange,
+  onClose,
+  showRightContent,
+  rightContent,
+  reduceMotion,
+  includeRightContentInDrawer,
+}: {
+  open: boolean;
+  items: NotchItemData[];
+  activeId?: string;
+  onActiveChange?: (id: string) => void;
+  onClose: () => void;
+  showRightContent: boolean;
+  rightContent?: ReactNode;
+  reduceMotion: boolean | null;
+  includeRightContentInDrawer: boolean;
+}) {
+  return (
+    <AnimatePresence>
+      {open ? (
+        <motion.div
+          id="notch-compact-drawer"
+          initial={reduceMotion ? false : { opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}
+          transition={{ duration: 0.28, ease: easePremium }}
+          className="mt-2 overflow-hidden rounded-2xl bg-nav-surface p-2 filter-[drop-shadow(var(--nav-drop-shadow))]"
+        >
+          <ul className="flex flex-col">
+            {items.map((item) => {
+              const Icon = item.icon;
+              const active = item.id === activeId;
+
+              return (
+                <li key={item.id}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onActiveChange?.(item.id);
+                      onClose();
+                    }}
+                    aria-current={active ? "true" : undefined}
+                    className={cn(
+                      "flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-nav transition-colors",
+                      active
+                        ? "bg-nav-active text-nav-foreground"
+                        : "text-nav-muted hover:bg-nav-icon-hover hover:text-nav-foreground"
+                    )}
+                  >
+                    {Icon ? <Icon className="size-4" aria-hidden /> : null}
+                    {item.label}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+          {includeRightContentInDrawer && showRightContent ? (
+            <div className="mt-2 border-t border-border px-2 py-3">
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                {rightContent}
+              </div>
+            </div>
+          ) : null}
+        </motion.div>
+      ) : null}
+    </AnimatePresence>
+  );
+}
+
 export function NotchNav({
   items,
   activeId,
@@ -70,26 +164,29 @@ export function NotchNav({
 }: NotchNavProps) {
   const labelId = useId();
   const reduceMotion = useReducedMotion();
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [compactMenuOpen, setCompactMenuOpen] = useState(false);
 
   const pinClass =
     position === "bottom"
       ? "bottom-4 md:bottom-6"
       : "top-3 md:top-5";
 
+  const closeCompactMenu = () => setCompactMenuOpen(false);
+  const toggleCompactMenu = () => setCompactMenuOpen((open) => !open);
+
   return (
     <div
       className={cn(
-        "pointer-events-none fixed inset-x-0 z-50 flex justify-center px-2 sm:px-3 md:px-5",
+        "pointer-events-none fixed inset-x-0 z-50 flex justify-center px-4 md:px-5",
         pinClass,
         className
       )}
     >
-      <div className="pointer-events-auto mx-auto w-fit max-w-full">
+      <div className="pointer-events-auto mx-auto w-full max-w-full min-[1200px]:w-fit">
         {/* Desktop triple-island */}
         <nav
           aria-labelledby={labelId}
-          className="hidden md:flex items-center justify-center gap-2 filter-[drop-shadow(var(--nav-drop-shadow))]"
+          className="hidden min-[1200px]:flex items-center justify-center gap-2 filter-[drop-shadow(var(--nav-drop-shadow))]"
         >
           <span id={labelId} className="sr-only">
             Primary
@@ -146,72 +243,51 @@ export function NotchNav({
           ) : null}
         </nav>
 
-        {/* Mobile compact drawer */}
-        <div className="md:hidden w-[min(100%,calc(100vw-1rem))]">
+        {/* Tablet compact bar — logo + actions + menu */}
+        <div className="hidden min-[768px]:max-[1199px]:flex w-full">
           <Island className="h-10 w-full justify-between rounded-2xl px-2.5 sm:h-11 sm:px-3 filter-[drop-shadow(var(--nav-drop-shadow))]">
-            <div className="flex min-w-0 flex-1 items-center pr-2">{showLogo ? logo : null}</div>
-            <div className="flex shrink-0 items-center">
-              <button
-                type="button"
-                className="flex size-8 items-center justify-center rounded-full text-nav-foreground hover:bg-nav-icon-hover"
-                aria-expanded={mobileOpen}
-                aria-controls="notch-mobile-drawer"
-                aria-label={mobileOpen ? "Close menu" : "Open menu"}
-                onClick={() => setMobileOpen((open) => !open)}
-              >
-                {mobileOpen ? <X className="size-4" /> : <Menu className="size-4" />}
-              </button>
+            <div className="flex min-w-0 flex-1 items-center pr-2">
+              {showLogo ? logo : null}
+            </div>
+            <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
+              {showRightContent ? rightContent : null}
+              <MenuToggleButton open={compactMenuOpen} onToggle={toggleCompactMenu} />
             </div>
           </Island>
 
-          <AnimatePresence>
-            {mobileOpen ? (
-              <motion.div
-                id="notch-mobile-drawer"
-                initial={reduceMotion ? false : { opacity: 0, y: -8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}
-                transition={{ duration: 0.28, ease: easePremium }}
-                className="mt-2 overflow-hidden rounded-2xl bg-nav-surface p-2 filter-[drop-shadow(var(--nav-drop-shadow))]"
-              >
-                <ul className="flex flex-col">
-                  {items.map((item) => {
-                    const Icon = item.icon;
-                    const active = item.id === activeId;
+          <CompactNavDrawer
+            open={compactMenuOpen}
+            items={items}
+            activeId={activeId}
+            onActiveChange={onActiveChange}
+            onClose={closeCompactMenu}
+            showRightContent={showRightContent}
+            rightContent={rightContent}
+            reduceMotion={reduceMotion}
+            includeRightContentInDrawer={false}
+          />
+        </div>
 
-                    return (
-                      <li key={item.id}>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            onActiveChange?.(item.id);
-                            setMobileOpen(false);
-                          }}
-                          aria-current={active ? "true" : undefined}
-                          className={cn(
-                            "flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-nav transition-colors",
-                            active
-                              ? "bg-nav-active text-nav-foreground"
-                              : "text-nav-muted hover:bg-nav-icon-hover hover:text-nav-foreground"
-                          )}
-                        >
-                          {Icon ? <Icon className="size-4" aria-hidden /> : null}
-                          {item.label}
-                        </button>
-                      </li>
-                    );
-                  })}
-                </ul>
-                {showRightContent ? (
-                  <div className="mt-2 border-t border-border px-2 py-3">
-                    <div className="flex flex-wrap items-center justify-center gap-2">
-                      {rightContent}
-                    </div>
-                  </div>
-                ) : null}
-              </motion.div>
-            ) : null}
-          </AnimatePresence>
+        {/* Mobile compact drawer */}
+        <div className="md:hidden w-full">
+          <Island className="h-10 w-full justify-between rounded-2xl px-2.5 sm:h-11 sm:px-3 filter-[drop-shadow(var(--nav-drop-shadow))]">
+            <div className="flex min-w-0 flex-1 items-center pr-2">{showLogo ? logo : null}</div>
+            <div className="flex shrink-0 items-center">
+              <MenuToggleButton open={compactMenuOpen} onToggle={toggleCompactMenu} />
+            </div>
+          </Island>
+
+          <CompactNavDrawer
+            open={compactMenuOpen}
+            items={items}
+            activeId={activeId}
+            onActiveChange={onActiveChange}
+            onClose={closeCompactMenu}
+            showRightContent={showRightContent}
+            rightContent={rightContent}
+            reduceMotion={reduceMotion}
+            includeRightContentInDrawer
+          />
         </div>
 
         {children ? (
